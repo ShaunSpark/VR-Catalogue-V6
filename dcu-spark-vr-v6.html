@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Spark — VR App Catalogue · DCU</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,800,400,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#003865; --navy-mid:#00508A; --gold:#D4A01A; --gold-light:#F5C842;
+  --gold-pale:#FFF6D6; --white:#fff; --off-white:#F5F7FA; --border:#DDE4EF;
+  --text:#0D1F35; --muted:#587090; --radius:14px;
+  --shadow-sm:0 2px 12px rgba(0,56,101,0.08); --shadow-md:0 8px 32px rgba(0,56,101,0.14);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Satoshi','Helvetica Neue',Helvetica,sans-serif;background:var(--off-white);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+nav{background:var(--navy);height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,0.22);}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.dcu-logo-wrap{background:white;padding:5px 9px;border-radius:4px;display:flex;align-items:center;}
+.dcu-logo-wrap img{height:34px;width:auto;}
+.nav-tagline{color:rgba(255,255,255,0.6);font-size:0.72rem;line-height:1.4;border-left:1px solid rgba(255,255,255,0.2);padding-left:14px;}
+.nav-centre{font-weight:700;font-size:1rem;color:white;}
+.nav-back{display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.22);color:white;padding:8px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.18s;font-family:inherit;}
+.nav-back:hover{background:rgba(255,255,255,0.2);}
+.nav-back.show{display:flex;}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;animation:pageIn 0.3s ease;}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{background:var(--navy);padding:4rem 2.5rem 0;overflow:hidden;position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 54%,rgba(212,160,26,0.22) 54%,rgba(245,200,66,0.18) 70%,rgba(100,180,230,0.14) 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.05) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.hero-text{flex:1;padding-bottom:3rem;position:relative;z-index:1;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(212,160,26,0.18);border:1px solid rgba(212,160,26,0.4);color:var(--gold-light);font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:1.2rem;}
+.hero-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold-light);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.hero h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:800;color:white;line-height:1.05;letter-spacing:-0.02em;margin-bottom:1rem;}
+.hero h1 em{font-style:normal;color:var(--gold-light);}
+.hero p{color:rgba(255,255,255,0.62);font-size:0.95rem;line-height:1.72;max-width:480px;}
+.hero-stats{display:flex;flex-direction:column;gap:10px;padding-bottom:3rem;position:relative;z-index:1;flex-shrink:0;}
+.stat-pill{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:12px;min-width:170px;}
+.stat-num{font-size:1.8rem;font-weight:800;color:var(--gold-light);line-height:1;}
+.stat-label{font-size:0.7rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;font-weight:500;}
+
+/* TAB STRIP */
+.tab-strip{background:var(--navy);padding:0 2.5rem;display:flex;gap:0;border-top:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;}
+.tab-btn{background:none;border:none;color:rgba(255,255,255,0.5);font-family:inherit;font-size:0.82rem;font-weight:600;padding:14px 20px;cursor:pointer;border-bottom:3px solid transparent;transition:color 0.18s,border-color 0.18s;letter-spacing:0.02em;white-space:nowrap;}
+.tab-btn:hover{color:rgba(255,255,255,0.85);}
+.tab-btn.active{color:var(--gold-light);border-bottom-color:var(--gold);}
+
+/* BODY */
+.catalogue-body{padding:2.5rem 2.5rem 4rem;}
+.section-intro{margin-bottom:2rem;}
+.section-kicker{font-size:0.7rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.section-intro h2{font-size:1.6rem;font-weight:800;color:var(--navy);letter-spacing:-0.02em;margin-bottom:0.4rem;}
+.section-intro p{color:var(--muted);font-size:0.88rem;line-height:1.65;max-width:640px;}
+
+/* SUB-CAT HEADER */
+.sub-cat-header{display:flex;align-items:center;gap:12px;margin:2rem 0 1.2rem;}
+.sub-cat-line{flex:1;height:1px;background:var(--border);}
+.sub-cat-label{font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);background:var(--gold-pale);border:1px solid var(--gold);padding:5px 14px;border-radius:100px;white-space:nowrap;}
+
+/* SKILL CARDS GRID (transversal) */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem;}
+.skill-card{background:white;border:2px solid var(--border);border-radius:var(--radius);padding:1.3rem 1.1rem 1.1rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0.6rem;transition:border-color 0.2s,box-shadow 0.2s,transform 0.22s;position:relative;overflow:hidden;}
+.skill-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform 0.25s;}
+.skill-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-4px);}
+.skill-card:hover::after{transform:scaleX(1);}
+.skill-icon{width:60px;height:60px;border-radius:50%;background:var(--navy);border:2.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;flex-shrink:0;}
+.skill-icon img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.skill-name{font-weight:700;font-size:0.85rem;color:var(--navy);line-height:1.3;}
+.skill-meta{font-size:0.72rem;color:var(--muted);}
+.skill-cta{margin-top:auto;background:var(--navy);color:var(--gold-light);border-radius:100px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;transition:background 0.2s;flex-shrink:0;}
+.skill-card:hover .skill-cta{background:var(--gold);color:var(--navy);}
+
+/* APP CARDS GRID (specialised) */
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;}
+.app-card{background:white;border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.22s;}
+.app-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-4px);}
+.app-img{width:100%;height:150px;object-fit:cover;background:var(--navy);display:block;}
+.app-img-placeholder{width:100%;height:150px;background:linear-gradient(135deg,var(--navy),var(--navy-mid));display:flex;align-items:center;justify-content:center;}
+.app-logo-badge{width:72px;height:72px;border-radius:16px;object-fit:contain;background:white;padding:4px;}
+.app-body{padding:1rem 1.1rem 1.1rem;}
+.app-header{display:flex;align-items:center;gap:10px;margin-bottom:0.6rem;}
+.app-logo-small{width:36px;height:36px;border-radius:8px;object-fit:contain;background:var(--off-white);border:1px solid var(--border);padding:3px;flex-shrink:0;}
+.app-logo-fallback{width:36px;height:36px;border-radius:8px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.app-name{font-weight:800;font-size:0.95rem;color:var(--navy);line-height:1.2;}
+.app-desc{font-size:0.8rem;color:var(--muted);line-height:1.58;margin-bottom:0.85rem;}
+.app-footer{display:flex;align-items:center;justify-content:space-between;padding-top:0.7rem;border-top:1px solid var(--border);gap:8px;}
+.app-price{font-weight:700;font-size:0.78rem;color:var(--navy);background:var(--gold-pale);border:1px solid var(--gold);padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.app-session{font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.app-session::before{content:'⏱';font-size:0.7rem;}
+
+/* DETAIL PAGE */
+.detail-header{background:var(--navy);padding:2.2rem 2.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.detail-logo{width:80px;height:80px;border-radius:18px;background:white;display:flex;align-items:center;justify-content:center;padding:8px;flex-shrink:0;border:3px solid var(--gold);}
+.detail-logo img{width:100%;height:100%;object-fit:contain;}
+.detail-logo-fallback{width:80px;height:80px;border-radius:18px;background:rgba(255,255,255,0.1);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;}
+.detail-cat{font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);margin-bottom:4px;}
+.detail-title{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;color:white;letter-spacing:-0.02em;margin-bottom:0.4rem;}
+.detail-desc{color:rgba(255,255,255,0.65);font-size:0.9rem;line-height:1.7;max-width:580px;}
+.detail-meta-bar{background:var(--gold-pale);border-top:2px solid var(--gold);padding:0.9rem 2.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;}
+.meta-item{display:flex;flex-direction:column;gap:2px;}
+.meta-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+.meta-value{font-size:0.85rem;font-weight:700;color:var(--navy);}
+.detail-skills-bar{background:white;border-bottom:1px solid var(--border);padding:0.9rem 2.5rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.dsb-label{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);margin-right:4px;}
+.skill-tag{background:var(--navy);color:var(--gold-light);font-size:0.72rem;font-weight:600;padding:4px 12px;border-radius:100px;}
+.detail-content{padding:2.2rem 2.5rem;}
+.detail-content h3{font-size:1rem;font-weight:800;color:var(--navy);margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:3px solid var(--gold);display:inline-block;}
+.detail-img-full{width:100%;max-height:340px;object-fit:cover;border-radius:12px;margin-bottom:1.5rem;border:1px solid var(--border);}
+
+/* CTA BANNER */
+.cta-banner{margin:0 2.5rem 4rem;background:linear-gradient(115deg,var(--navy) 65%,var(--navy-mid));border-radius:16px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;}
+.cta-text h3{font-size:1.15rem;font-weight:800;color:white;margin-bottom:4px;}
+.cta-text p{color:rgba(255,255,255,0.65);font-size:0.85rem;}
+.btn-gold{background:var(--gold);color:var(--navy);font-family:inherit;font-weight:700;font-size:0.88rem;padding:11px 24px;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:background 0.18s,transform 0.18s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);}
+
+/* FOOTER */
+footer{background:var(--navy);padding:1.6rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-brand{font-weight:800;font-size:0.95rem;color:white;}
+.footer-brand span{color:var(--gold-light);}
+footer p{font-size:0.76rem;color:rgba(255,255,255,0.38);}
+
+/* TAB PANEL */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* REQUEST TAB */
+.tab-btn-request{color:rgba(255,255,255,0.7) !important;border-left:1px solid rgba(255,255,255,0.15);margin-left:auto;}
+.tab-btn-request.active{color:var(--gold-light) !important;}
+
+/* PATH CHOOSER */
+.path-chooser{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-bottom:2.5rem;max-width:860px;}
+.path-card{background:white;border:2.5px solid var(--border);border-radius:16px;padding:1.8rem 1.6rem;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s,transform 0.22s;display:flex;flex-direction:column;gap:0.7rem;}
+.path-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-3px);}
+.path-icon{font-size:2rem;}
+.path-title{font-size:1.05rem;font-weight:800;color:var(--navy);}
+.path-desc{font-size:0.82rem;color:var(--muted);line-height:1.6;}
+.path-cta{margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:0.8rem;font-weight:700;color:var(--navy-mid);}
+@media(max-width:600px){.path-chooser{grid-template-columns:1fr;}}
+
+/* AI FINDER */
+.ai-finder{background:white;border:2px solid var(--border);border-radius:16px;overflow:hidden;max-width:860px;margin-bottom:2rem;display:none;}
+.ai-finder.show{display:block;}
+.ai-finder-header{background:var(--navy);padding:1.4rem 1.8rem;display:flex;align-items:flex-start;gap:12px;}
+.ai-finder-header-text h3{font-size:1rem;font-weight:800;color:white;}
+.ai-finder-header-text p{font-size:0.78rem;color:rgba(255,255,255,0.6);margin-top:2px;}
+.ai-badge{background:var(--gold);color:var(--navy);font-size:0.65rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:2px;}
+
+/* QUIZ */
+.quiz-wrap{padding:1.8rem;}
+.quiz-step{display:none;}
+.quiz-step.active{display:block;}
+.quiz-q{font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:0.3rem;}
+.quiz-q span{font-size:0.72rem;font-weight:600;color:var(--muted);display:block;margin-top:3px;margin-bottom:1rem;}
+.quiz-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:0.7rem;margin-bottom:1.4rem;}
+.quiz-opt{background:var(--off-white);border:2px solid var(--border);border-radius:10px;padding:10px 14px;font-size:0.82rem;font-weight:600;color:var(--navy);cursor:pointer;transition:all 0.18s;text-align:left;}
+.quiz-opt:hover{border-color:var(--gold);background:var(--gold-pale);}
+.quiz-opt.selected{border-color:var(--navy);background:var(--navy);color:white;}
+.quiz-nav{display:flex;align-items:center;gap:1rem;}
+.quiz-back-btn{background:none;border:2px solid var(--border);border-radius:8px;padding:9px 18px;font-family:inherit;font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:border-color 0.18s;}
+.quiz-back-btn:hover{border-color:var(--navy);color:var(--navy);}
+.quiz-next-btn{background:var(--navy);color:white;border:none;border-radius:8px;padding:9px 22px;font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;transition:background 0.18s;}
+.quiz-next-btn:hover{background:var(--navy-mid);}
+.quiz-next-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.quiz-progress{display:flex;gap:5px;margin-bottom:1.4rem;}
+.quiz-dot{width:28px;height:4px;border-radius:100px;background:var(--border);transition:background 0.3s;}
+.quiz-dot.done{background:var(--gold);}
+.quiz-dot.current{background:var(--navy);}
+
+/* AI RESULTS */
+.ai-results{padding:1.8rem;display:none;}
+.ai-results.show{display:block;}
+.ai-results-title{font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:0.4rem;}
+.ai-results-sub{font-size:0.8rem;color:var(--muted);margin-bottom:1.4rem;}
+.ai-thinking{display:flex;align-items:center;gap:10px;padding:1.5rem;background:var(--off-white);border-radius:10px;font-size:0.85rem;color:var(--muted);}
+.ai-spinner{width:18px;height:18px;border:2.5px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.result-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;}
+.result-card{border:2px solid var(--border);border-radius:12px;padding:1.2rem;transition:border-color 0.2s,box-shadow 0.2s;background:white;}
+.result-card:hover{border-color:var(--gold);box-shadow:var(--shadow-sm);}
+.result-card.in-catalogue{border-left:4px solid var(--gold);}
+.result-card.external{border-left:4px solid var(--navy-mid);}
+.result-badge{font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:100px;display:inline-block;margin-bottom:8px;}
+.result-badge.badge-catalogue{background:var(--gold-pale);color:#7a5c00;}
+.result-badge.badge-external{background:#e8f0ff;color:var(--navy-mid);}
+.result-name{font-size:0.92rem;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.result-why{font-size:0.78rem;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-view-app{background:var(--navy);color:white;border:none;border-radius:6px;padding:6px 14px;font-family:inherit;font-size:0.75rem;font-weight:700;cursor:pointer;transition:background 0.18s;}
+.btn-view-app:hover{background:var(--navy-mid);}
+.btn-request-this{background:var(--gold-pale);color:var(--navy);border:1.5px solid var(--gold);border-radius:6px;padding:6px 14px;font-family:inherit;font-size:0.75rem;font-weight:700;cursor:pointer;transition:background 0.18s;}
+.btn-request-this:hover{background:var(--gold);}
+.ai-restart{margin-top:1.2rem;background:none;border:2px solid var(--border);border-radius:8px;padding:8px 18px;font-family:inherit;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;}
+.ai-restart:hover{border-color:var(--navy);color:var(--navy);}
+.ai-fallback{background:var(--off-white);border:2px dashed var(--border);border-radius:12px;padding:1.5rem;text-align:center;margin-top:1rem;}
+.ai-fallback p{font-size:0.83rem;color:var(--muted);margin-bottom:0.8rem;}
+.contact-spark-btn{background:var(--navy);color:white;border:none;border-radius:8px;padding:10px 22px;font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;}
+.contact-spark-btn:hover{background:var(--navy-mid);}
+
+/* SPARK CONTACT FORM */
+.spark-contact{background:white;border:2px solid var(--border);border-radius:16px;padding:1.8rem;max-width:860px;display:none;}
+.spark-contact.show{display:block;}
+.spark-contact-header{display:flex;align-items:center;gap:10px;margin-bottom:0.3rem;}
+.spark-contact h3{font-size:1rem;font-weight:800;color:var(--navy);}
+.spark-contact p{font-size:0.82rem;color:var(--muted);margin-bottom:1.2rem;}
+
+.req-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem;margin-bottom:2.5rem;}
+.req-card{background:white;border:2px solid var(--border);border-radius:var(--radius);padding:1.3rem 1.2rem;display:flex;flex-direction:column;gap:0.6rem;transition:border-color 0.2s,box-shadow 0.2s;}
+.req-card:hover{border-color:var(--gold);box-shadow:var(--shadow-sm);}
+.req-icon{font-size:1.6rem;}
+.req-title{font-weight:800;font-size:0.9rem;color:var(--navy);}
+.req-body{font-size:0.8rem;color:var(--muted);line-height:1.6;}
+
+.request-form-wrap{background:white;border:2px solid var(--border);border-radius:16px;padding:2rem 2.2rem;max-width:860px;}
+.request-form-header{margin-bottom:1.8rem;}
+.request-form-header h3{font-size:1.3rem;font-weight:800;color:var(--navy);margin-bottom:0.3rem;}
+.request-form-header p{font-size:0.85rem;color:var(--muted);}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.5rem;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group-full{grid-column:1/-1;}
+.form-label{font-size:0.78rem;font-weight:700;color:var(--navy);letter-spacing:0.02em;}
+.form-required{color:#c0392b;}
+.form-input{border:2px solid var(--border);border-radius:8px;padding:10px 13px;font-family:inherit;font-size:0.85rem;color:var(--text);background:var(--off-white);transition:border-color 0.18s,box-shadow 0.18s;outline:none;}
+.form-input:focus{border-color:var(--navy-mid);box-shadow:0 0 0 3px rgba(0,80,138,0.1);background:white;}
+.form-select{cursor:pointer;}
+.form-textarea{min-height:110px;resize:vertical;line-height:1.6;}
+.form-actions{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.form-note{font-size:0.75rem;color:var(--muted);line-height:1.6;max-width:480px;}
+.form-success{display:none;text-align:center;padding:2.5rem 1rem;flex-direction:column;align-items:center;gap:0.7rem;}
+.form-success.show{display:flex;}
+.success-icon{font-size:2.8rem;}
+.form-success h3{font-size:1.2rem;font-weight:800;color:var(--navy);}
+.form-success p{font-size:0.88rem;color:var(--muted);max-width:380px;}
+@media(max-width:640px){.form-grid{grid-template-columns:1fr;}.form-group-full{grid-column:1;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="dcu-logo-wrap">
+      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/be/DCU_logo_2018.png/250px-DCU_logo_2018.png" alt="DCU" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-weight:800;font-size:1.4rem;color:#003865\'>DCU</span>'">
+    </div>
+    <div class="nav-tagline">Ollscoil Chathair Bhaile Átha Cliath<br>Dublin City University</div>
+  </div>
+  <div class="nav-centre">The Spark — VR App Catalogue</div>
+  <button class="nav-back" id="backBtn" onclick="showHome()">← Back to Catalogue</button>
+</nav>
+
+<!-- ====== HOME PAGE ====== -->
+<div class="page active" id="home-page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-pill"><span class="dot"></span>The Spark · DCU Futures</div>
+      <h1>The Spark<br><em>VR App Catalogue</em></h1>
+      <p>50+ curated virtual reality applications matched to DCU's transversal skills framework and specialist subject areas. Browse by skill, subject, or broad experience.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill"><div class="stat-num">50+</div><div class="stat-label">VR Apps</div></div>
+      <div class="stat-pill"><div class="stat-num">4</div><div class="stat-label">Sections</div></div>
+      <div class="stat-pill"><div class="stat-num">3</div><div class="stat-label">Bookable Rooms</div></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-strip">
+    <button class="tab-btn active" onclick="switchTab('transversal',this)">🎓 Transversal Skills (MySkills)</button>
+    <button class="tab-btn" onclick="switchTab('broad',this)">🌐 Broad Experiences</button>
+    <button class="tab-btn" onclick="switchTab('medical',this)">🏥 Health & Medical</button>
+    <button class="tab-btn" onclick="switchTab('engineering',this)">⚙️ Engineering & Tech</button>
+    <button class="tab-btn" onclick="switchTab('environment',this)">🌿 Environment & Geography</button>
+    <button class="tab-btn" onclick="switchTab('professional',this)">💼 Professional & Industry</button>
+    <button class="tab-btn tab-btn-request" onclick="switchTab('request',this)">✉️ Request an App</button>
+  </div>
+
+  <!-- TAB 1: TRANSVERSAL -->
+  <div class="tab-panel active" id="tab-transversal">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">MySkills — DCU Transversal Framework</div>
+        <h2>Transversal Skills Apps</h2>
+        <p>Apps aligned with DCU's official MySkills transversal framework. Each skill area links to the DCU MySkills platform and supports the development of career-ready competencies. Click any skill to see matching apps.</p>
+      </div>
+
+      <div class="sub-cat-header"><div class="sub-cat-line"></div><div class="sub-cat-label">Communication, Collaboration & Leadership</div><div class="sub-cat-line"></div></div>
+      <div class="skills-grid">
+        <div class="skill-card" onclick="showSkillDetail('bodyswaps')">
+          <div class="skill-icon"><img src="https://media.licdn.com/dms/image/C4D0BAQGz7p0XRTS4qg/company-logo_200_200/0/1655295694777?e=2147483647&v=beta&t=wX_7YLsB1JWjKX0sPm5cCQm9HJYmFkn6GIlAqvHSyxo" alt="Bodyswaps" onerror="this.parentElement.textContent='🗣'"></div>
+          <div class="skill-name">Bodyswaps</div>
+          <div class="skill-meta">AI soft skills · 10–20 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('vrspeech')">
+          <div class="skill-icon"><img src="https://virtualspeech.com/assets/images/logo/vs-logo-mark.png" alt="VR Speech" onerror="this.parentElement.textContent='🎤'"></div>
+          <div class="skill-name">VR Speech Trainer</div>
+          <div class="skill-meta">Public speaking · 10–15 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('meetinvr')">
+          <div class="skill-icon"><img src="https://meetinvr.com/wp-content/uploads/2021/03/meetinvr-icon.png" alt="MeetInVR" onerror="this.parentElement.textContent='🤝'"></div>
+          <div class="skill-name">MeetInVR</div>
+          <div class="skill-meta">Virtual meetings · 20–60 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('engage')">
+          <div class="skill-icon"><img src="https://engagexr.com/wp-content/uploads/2022/05/engage-icon.png" alt="Engage" onerror="this.parentElement.textContent='🎓'"></div>
+          <div class="skill-name">Engage XR</div>
+          <div class="skill-meta">VR teaching platform · 30–60 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('immerse')">
+          <div class="skill-icon"><img src="https://immerse.io/wp-content/uploads/2021/05/immerse-icon.png" alt="Immerse" onerror="this.parentElement.textContent='💼'"></div>
+          <div class="skill-name">Immerse</div>
+          <div class="skill-meta">Enterprise training · 20–40 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('revertovr')">
+          <div class="skill-icon" style="background:var(--navy);">🔄</div>
+          <div class="skill-name">Reverto VR</div>
+          <div class="skill-meta">Empathy training · 10–20 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+      </div>
+
+      <div class="sub-cat-header"><div class="sub-cat-line"></div><div class="sub-cat-label">Creativity, Innovation & Thinking</div><div class="sub-cat-line"></div></div>
+      <div class="skills-grid">
+        <div class="skill-card" onclick="showSkillDetail('arkio')">
+          <div class="skill-icon"><img src="https://www.arkio.is/wp-content/uploads/2022/01/arkio-icon-512.png" alt="Arkio" onerror="this.parentElement.textContent='🏗'"></div>
+          <div class="skill-name">Arkio</div>
+          <div class="skill-meta">3D design · 20–60 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('noda')">
+          <div class="skill-icon"><img src="https://nodavr.com/wp-content/uploads/2021/07/noda-icon.png" alt="Noda" onerror="this.parentElement.textContent='🧩'"></div>
+          <div class="skill-name">Noda</div>
+          <div class="skill-meta">Mind mapping · 15–30 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('campfire')">
+          <div class="skill-icon"><img src="https://campfire3d.com/wp-content/uploads/2023/09/campfire-icon.png" alt="Campfire" onerror="this.parentElement.textContent='🔥'"></div>
+          <div class="skill-name">Campfire</div>
+          <div class="skill-meta">3D collaboration · 20–40 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('cogdemo')">
+          <div class="skill-icon" style="background:var(--navy);">🧠</div>
+          <div class="skill-name">Cognitive Training Demo</div>
+          <div class="skill-meta">Problem solving · 10–15 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('thinglink')">
+          <div class="skill-icon"><img src="https://www.thinglink.com/assets/images/thinglink-icon.png" alt="ThingLink" onerror="this.parentElement.textContent='🔗'"></div>
+          <div class="skill-name">ThingLink</div>
+          <div class="skill-meta">Interactive content · 20–40 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+      </div>
+
+      <div class="sub-cat-header"><div class="sub-cat-line"></div><div class="sub-cat-label">Digital Literacy & Learning Tools</div><div class="sub-cat-line"></div></div>
+      <div class="skills-grid">
+        <div class="skill-card" onclick="showSkillDetail('xrguru')">
+          <div class="skill-icon" style="background:var(--navy);">📡</div>
+          <div class="skill-name">XR Guru</div>
+          <div class="skill-meta">General XR learning · 10–20 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('victoryxr')">
+          <div class="skill-icon"><img src="https://victoryxr.com/wp-content/uploads/2021/09/VictoryXR-Icon.png" alt="VictoryXR" onerror="this.parentElement.textContent='🏆'"></div>
+          <div class="skill-name">VictoryXR (VXRLabs)</div>
+          <div class="skill-meta">Multi-subject library · 15–30 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('vrinschool')">
+          <div class="skill-icon" style="background:var(--navy);">🏫</div>
+          <div class="skill-name">VRinSchool</div>
+          <div class="skill-meta">Curriculum VR · 15–30 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+      </div>
+
+      <div class="sub-cat-header"><div class="sub-cat-line"></div><div class="sub-cat-label">Personal Agility & Cognitive Development</div><div class="sub-cat-line"></div></div>
+      <div class="skills-grid">
+        <div class="skill-card" onclick="showSkillDetail('wetrainyourbrain')">
+          <div class="skill-icon" style="background:var(--navy);">🧠</div>
+          <div class="skill-name">We Train Your Brain</div>
+          <div class="skill-meta">Cognitive training · 10–15 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+        <div class="skill-card" onclick="showSkillDetail('mastermind')">
+          <div class="skill-icon" style="background:var(--navy);">🎯</div>
+          <div class="skill-name">Mastermind Cognitive</div>
+          <div class="skill-meta">Neuroscience training · 20 min</div>
+          <div class="skill-cta">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: BROAD -->
+  <div class="tab-panel" id="tab-broad">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Multi-Skill Experiences</div>
+        <h2>Broad VR Platforms</h2>
+        <p>These platforms develop multiple transversal skills simultaneously — ideal for cross-disciplinary workshops and open sessions.</p>
+      </div>
+      <div class="apps-grid">
+        <div class="app-card" onclick="showAppDetail('engage')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=600&q=80" alt="Engage XR" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>🎓</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">🎓</div>
+              <div class="app-name">Engage XR</div>
+            </div>
+            <div class="app-desc">Large-scale VR teaching and events platform for lectures, presentations and structured collaborative sessions. Supports live instructor-led classes and virtual field trips.</div>
+            <div class="app-footer"><span class="app-price">€5k–€20k/yr</span><span class="app-session">30–60 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('immerse')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=600&q=80" alt="Immerse" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>💼</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">💼</div>
+              <div class="app-name">Immerse</div>
+            </div>
+            <div class="app-desc">Enterprise VR training platform with structured professional modules and detailed analytics. Covers workplace communication, leadership and industry-specific training.</div>
+            <div class="app-footer"><span class="app-price">Enterprise</span><span class="app-session">20–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('arkio')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80" alt="Arkio" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>🏗</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">🏗</div>
+              <div class="app-name">Arkio</div>
+            </div>
+            <div class="app-desc">Collaborative 3D architectural design platform — sketch buildings, explore spaces and collaborate with up to 24 people across VR, desktop and mobile simultaneously.</div>
+            <div class="app-footer"><span class="app-price">~€45/user/mo</span><span class="app-session">20–60 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('victoryxr')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&q=80" alt="VictoryXR" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>🏆</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">🏆</div>
+              <div class="app-name">VictoryXR (VXRLabs)</div>
+            </div>
+            <div class="app-desc">Large educational VR library with 150+ global field trips, virtual chemistry and biology labs, gamified history and CSI — designed for multiplayer synchronous learning.</div>
+            <div class="app-footer"><span class="app-price">€1k–€5k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('bodyswaps')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="Bodyswaps" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>🗣</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">🗣</div>
+              <div class="app-name">Bodyswaps</div>
+            </div>
+            <div class="app-desc">AI-powered soft skills training platform with 30+ modules covering communication, leadership, job interviews and workplace scenarios. Real-time AI behavioural feedback.</div>
+            <div class="app-footer"><span class="app-price">~€50–€100/user/yr</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('noda')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80" alt="Noda" onerror="this.outerHTML='<div class=\'app-img-placeholder\'>🧩</div>'">
+          <div class="app-body">
+            <div class="app-header">
+              <div class="app-logo-fallback">🧩</div>
+              <div class="app-name">Noda</div>
+            </div>
+            <div class="app-desc">Collaborative 3D mind-mapping tool — place and organise ideas spatially in VR. Ideal for group brainstorming, storyboarding and project planning workshops.</div>
+            <div class="app-footer"><span class="app-price">~€10–€20 one-off</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: MEDICAL -->
+  <div class="tab-panel" id="tab-medical">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Specialised — Health, Medicine & Biology</div>
+        <h2>Health, Medical & Biological Sciences</h2>
+        <p>Apps for nursing, medicine, biology and healthcare students. Covers anatomy, clinical simulation, patient interaction and surgical training.</p>
+      </div>
+      <div class="apps-grid">
+        <div class="app-card" onclick="showAppDetail('humananatomy')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?w=600&q=80" alt="Human Anatomy VR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🫀</div><div class="app-name">Human Anatomy VR</div></div>
+            <div class="app-desc">Comprehensive 3D anatomical atlas with 13,000+ structures. Explore body systems at high school or university level, with multi-user collaboration and CT/MRI DICOM viewing.</div>
+            <div class="app-footer"><span class="app-price">~€30–€50/headset</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('holohuman')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=600&q=80" alt="HoloHuman">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🧬</div><div class="app-name">HoloHuman</div></div>
+            <div class="app-desc">Interactive layered anatomy visualisation tool allowing students to peel back body layers to explore organs, muscles and skeletal structures in immersive 3D.</div>
+            <div class="app-footer"><span class="app-price">Low-cost / bundled</span><span class="app-session">10–15 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('undertheskin')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80" alt="Under the Skin">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">💉</div><div class="app-name">Under The Skin</div></div>
+            <div class="app-desc">Immersive VR experience designed to improve the safety of chemotherapy treatment — allows learners to experience biological and clinical processes from the inside.</div>
+            <div class="app-footer"><span class="app-price">Low-cost / academic</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('cellularsafari')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&q=80" alt="Cellular Safari">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🦠</div><div class="app-name">Cellular Safari</div></div>
+            <div class="app-desc">Microscopic exploration of cells and cellular structures — students navigate and interact with the building blocks of life at a scale impossible in a traditional lab setting.</div>
+            <div class="app-footer"><span class="app-price">Free–€20</span><span class="app-session">10–15 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('biodissection')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?w=600&q=80" alt="Biology Dissection Lab">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🐸</div><div class="app-name">Biology Dissection Lab</div></div>
+            <div class="app-desc">Virtual dissection experience featuring worm, clam, crayfish, fish and frog. Blends traditional dissections with VR for biology programmes — no mess, unlimited repeats.</div>
+            <div class="app-footer"><span class="app-price">€20–€50</span><span class="app-session">20–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('nanome')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80" alt="Nanome">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">⚗️</div><div class="app-name">Nanome</div></div>
+            <div class="app-desc">Molecular visualisation and manipulation platform used by top R&D labs. Students interact with 3D molecules, run simulations and collaborate in shared virtual lab environments.</div>
+            <div class="app-footer"><span class="app-price">Free + enterprise</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('oxfordmed')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=80" alt="Oxford Medical Simulation">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🏥</div><div class="app-name">Oxford Medical Simulation</div></div>
+            <div class="app-desc">AI-driven clinical training with rich, complex patient scenarios. Learners investigate, interpret and practise clinical decision-making in psychologically safe environments with analytics.</div>
+            <div class="app-footer"><span class="app-price">€3k–€10k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('vrpatients')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80" alt="VR Patients">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">👩‍⚕️</div><div class="app-name">VRPatients</div></div>
+            <div class="app-desc">Free no-code platform for AI-driven patient simulations — multilingual AI conversations, mixed reality integration and 35+ ready-to-run clinical scenarios for nursing and healthcare.</div>
+            <div class="app-footer"><span class="app-price">Free on Meta Store</span><span class="app-session">15–25 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('periopsim')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&q=80" alt="PeriopSim">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🔬</div><div class="app-name">PeriopSim</div></div>
+            <div class="app-desc">Operating room simulation for perioperative nurses and surgical technologists. Practise instrument handling, procedural steps and anticipation of surgeon needs — reduces OR learning time significantly.</div>
+            <div class="app-footer"><span class="app-price">€5k+/yr</span><span class="app-session">20–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('medreality')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80" alt="MedReality">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🩻</div><div class="app-name">MedReality</div></div>
+            <div class="app-desc">Clinical simulation training using scenario-based VR learning — provides realistic patient encounters and clinical reasoning challenges for medical and nursing students.</div>
+            <div class="app-footer"><span class="app-price">Institutional</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('ctdhelse')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=600&q=80" alt="CTD Helse">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🚑</div><div class="app-name">CTD Helse</div></div>
+            <div class="app-desc">Norwegian medical protocol and emergency training — covers ABCDE assessment, CPR, clinical workflows and structured communication. Collaborative multi-student and instructor-led modes available.</div>
+            <div class="app-footer"><span class="app-price">€3k–€10k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('maskillslab')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1581595219315-a187dd40c322?w=600&q=80" alt="MA Skills Lab">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">💊</div><div class="app-name">MA Skills Lab</div></div>
+            <div class="app-desc">Clinical skills practice in VR — guided lab procedures for medical and nursing students covering assessment techniques, procedural skills and patient care competencies.</div>
+            <div class="app-footer"><span class="app-price">€2k–€8k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('vrcpr')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=80" alt="VR CPR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">❤️</div><div class="app-name">VR CPR</div></div>
+            <div class="app-desc">CPR training simulation — practise emergency response procedures including chest compressions, AED use and airway management in a realistic, repeatable virtual environment.</div>
+            <div class="app-footer"><span class="app-price">€10–€50</span><span class="app-session">10–15 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('therafy')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=600&q=80" alt="Therafy">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🧘</div><div class="app-name">Therafy</div></div>
+            <div class="app-desc">Therapeutic VR experiences covering mental health and wellbeing scenarios — supports stress reduction, mindfulness and anxiety management for students and clinical populations.</div>
+            <div class="app-footer"><span class="app-price">Institutional</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('courseta')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1612277795421-9bc7706a4a34?w=600&q=80" alt="Courseta VR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🎓</div><div class="app-name">Courseta VR</div></div>
+            <div class="app-desc">VR nursing simulations designed by nurses — interact with AI patients, complete assessments and perform nursing interventions with automatic grading and performance review.</div>
+            <div class="app-footer"><span class="app-price">Institutional</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ENGINEERING -->
+  <div class="tab-panel" id="tab-engineering">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Specialised — Engineering, Physics & Technical</div>
+        <h2>Engineering, Physics & Technical Training</h2>
+        <p>Apps for engineering, physics, computer science and technical vocational students. Hands-on virtual labs, industrial simulations and equipment training.</p>
+      </div>
+      <div class="apps-grid">
+        <div class="app-card" onclick="showAppDetail('pearl')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="PEARL">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">⚡</div><div class="app-name">PEARL</div></div>
+            <div class="app-desc">Paderborn Electrical Engineering AR Laboratory — students explore circuits, use virtual lab equipment and discover electrical engineering concepts in an immersive AR/VR environment.</div>
+            <div class="app-footer"><span class="app-price">€1k–€5k/yr</span><span class="app-session">20–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('virtualelectrical')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80" alt="Virtual Electrical">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🔌</div><div class="app-name">Virtual Electrical Training</div></div>
+            <div class="app-desc">Electrical systems and safety training — interact with switchgear, wiring and safety equipment in scenarios covering lockout/tagout, arc flash and electrical hazard recognition.</div>
+            <div class="app-footer"><span class="app-price">€2k–€5k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('onelabvr')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=600&q=80" alt="OneLab VR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🔬</div><div class="app-name">OneLab VR</div></div>
+            <div class="app-desc">50,000 sq ft virtual clinical and public health laboratory with 12 labs and hundreds of pieces of equipment. 10–15 min scenario modules covering specimen handling, centrifuge operation and more.</div>
+            <div class="app-footer"><span class="app-price">€1k–€5k/yr</span><span class="app-session">10–15 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('optics')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=600&q=80" alt="Optics">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🔭</div><div class="app-name">Optics / Optics Trainer</div></div>
+            <div class="app-desc">Light and optical systems simulation — visualise how light behaves through lenses, prisms and optical instruments. Suited to physics and optometry students.</div>
+            <div class="app-footer"><span class="app-price">Low-cost</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('eddaphysics')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80" alt="Edda Physics">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">⚛️</div><div class="app-name">Edda Physics Demo</div></div>
+            <div class="app-desc">Physics visualisation tool where students interact with physical concepts including motion, energy and forces in immersive simulated environments that make abstract physics tangible.</div>
+            <div class="app-footer"><span class="app-price">Free–€50</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('firstskills')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=600&q=80" alt="First Skills Simulator">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🏭</div><div class="app-name">First Skills Simulator</div></div>
+            <div class="app-desc">Manufacturing and workshop skills training platform — students operate virtual machinery from the metalworking and manufacturing industries in a safe, repeatable environment.</div>
+            <div class="app-footer"><span class="app-price">€1k–€5k/yr</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('resolve')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80" alt="Resolve">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🏗</div><div class="app-name">Resolve</div></div>
+            <div class="app-desc">BIM and construction model review on Meta Quest — teams explore large 3D construction models collaboratively, simulate maintenance scenarios and conduct safety walkthroughs.</div>
+            <div class="app-footer"><span class="app-price">€5k–€20k/yr</span><span class="app-session">20–60 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('frontline')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80" alt="Frontline.io">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">⚙️</div><div class="app-name">Frontline.io</div></div>
+            <div class="app-desc">Industrial training simulation platform that transforms CAD files into interactive digital twins — enables cross-platform maintenance training, workflow simulation and AR-assisted support.</div>
+            <div class="app-footer"><span class="app-price">Enterprise</span><span class="app-session">20–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('virtualtechlab')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="Virtual TechLab">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">💻</div><div class="app-name">Virtual TechLab</div></div>
+            <div class="app-desc">Leading virtual learning environment revolutionising IT hardware education — students build, configure and troubleshoot computer hardware components in a fully immersive virtual lab.</div>
+            <div class="app-footer"><span class="app-price">Institutional</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: ENVIRONMENT -->
+  <div class="tab-panel" id="tab-environment">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Specialised — Environment, Geography & General Education</div>
+        <h2>Environment, Geography & General Education</h2>
+        <p>Immersive experiences covering ecology, sustainability, global geography and futures literacy — suitable for any faculty as standalone taster sessions.</p>
+      </div>
+      <div class="apps-grid">
+        <div class="app-card" onclick="showAppDetail('ecosphere')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80" alt="Ecosphere">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🌿</div><div class="app-name">Ecosphere</div></div>
+            <div class="app-desc">Award-winning social impact documentary — venture into the wildest places on Earth where indigenous and community-led efforts protect wildlife. Produced with WWF and the United Nations.</div>
+            <div class="app-footer"><span class="app-price">Free–€20</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('pollinatorpark')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1490750967868-88df5691cc15?w=600&q=80" alt="Pollinator Park">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🐝</div><div class="app-name">Pollinator Park</div></div>
+            <div class="app-desc">Set in 2050, a futuristic park for pollinating insects — a crossover between a zoo, interactive museum and crystal ball. Educational, emotionally engaging and available in 5-minute modular chapters perfect for rotation.</div>
+            <div class="app-footer"><span class="app-price">Free</span><span class="app-session">5–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('triptovr')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="TriptoVR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">✈️</div><div class="app-name">TriptoVR</div></div>
+            <div class="app-desc">Virtual travel experience to the world's most iconic destinations — from Tokyo to Cape Town. Explore cities, landmarks and cultural heritage sites in stunning 360° realism.</div>
+            <div class="app-footer"><span class="app-price">Free–€20</span><span class="app-session">10–30 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('wildxr')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=600&q=80" alt="WildXR">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🦁</div><div class="app-name">WildXR</div></div>
+            <div class="app-desc">150+ species filmed in 360° VR — encounter rare and exciting animals from around the world with narrated encounters, short documentaries and educational information points.</div>
+            <div class="app-footer"><span class="app-price">Free–low-cost</span><span class="app-session">10–15 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 7: REQUEST AN APP -->
+  <div class="tab-panel" id="tab-request">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Find or Request a VR App</div>
+        <h2>App Finder & Request</h2>
+        <p>Not sure what app you need, or looking for something we don't have yet? Choose a path below.</p>
+      </div>
+
+      <!-- PATH CHOOSER -->
+      <div class="path-chooser">
+        <div class="path-card" onclick="showPath('finder')">
+          <div class="path-icon">🤖</div>
+          <div class="path-title">Help me find an app</div>
+          <div class="path-desc">Not sure what you're looking for? Answer 4 quick questions and our AI will recommend apps from the catalogue — plus suggest options we don't have yet.</div>
+          <div class="path-cta">Start the quiz →</div>
+        </div>
+        <div class="path-card" onclick="showPath('form')">
+          <div class="path-icon">✉️</div>
+          <div class="path-title">I know what app I want</div>
+          <div class="path-desc">Already have a specific app in mind that isn't in the catalogue? Submit a request directly and the Spark team will review it for inclusion.</div>
+          <div class="path-cta">Go to request form →</div>
+        </div>
+      </div>
+
+      <!-- AI APP FINDER -->
+      <div class="ai-finder" id="ai-finder">
+        <div class="ai-finder-header">
+          <div class="ai-badge">AI</div>
+          <div class="ai-finder-header-text">
+            <h3>App Finder</h3>
+            <p>Answer 4 short questions — we'll match you to the best VR apps for your needs.</p>
+          </div>
+        </div>
+        <div class="quiz-wrap" id="quiz-wrap">
+          <div class="quiz-progress">
+            <div class="quiz-dot current" id="qdot-0"></div>
+            <div class="quiz-dot" id="qdot-1"></div>
+            <div class="quiz-dot" id="qdot-2"></div>
+            <div class="quiz-dot" id="qdot-3"></div>
+          </div>
+
+          <!-- Q1 -->
+          <div class="quiz-step active" id="qstep-0">
+            <div class="quiz-q">What subject area do you teach or work in?<span>Select the closest match.</span></div>
+            <div class="quiz-options">
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Health & Nursing')">🏥 Health & Nursing</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Engineering & Physics')">⚙️ Engineering & Physics</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Science & Biology')">🔬 Science & Biology</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Business & Management')">💼 Business & Management</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Communications & Arts')">🎨 Communications & Arts</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Environment & Geography')">🌿 Environment & Geography</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Education & Training')">🎓 Education & Training</button>
+              <button class="quiz-opt" onclick="selectOpt(0,this,'Any / Cross-faculty')">🌐 Any / Cross-faculty</button>
+            </div>
+            <div class="quiz-nav">
+              <button class="quiz-next-btn" id="qnext-0" onclick="nextStep(0)" disabled>Next →</button>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-step" id="qstep-1">
+            <div class="quiz-q">What's the main learning goal?<span>What should students get out of the session?</span></div>
+            <div class="quiz-options">
+              <button class="quiz-opt" onclick="selectOpt(1,this,'Practise clinical or technical skills')">🛠 Practise clinical or technical skills</button>
+              <button class="quiz-opt" onclick="selectOpt(1,this,'Develop communication or soft skills')">🗣 Communication or soft skills</button>
+              <button class="quiz-opt" onclick="selectOpt(1,this,'Explore concepts visually')">👁 Explore concepts visually</button>
+              <button class="quiz-opt" onclick="selectOpt(1,this,'Collaborate and problem-solve')">🤝 Collaborate and problem-solve</button>
+              <button class="quiz-opt" onclick="selectOpt(1,this,'Empathy and perspective-taking')">💛 Empathy and perspective-taking</button>
+              <button class="quiz-opt" onclick="selectOpt(1,this,'General taster or engagement')">✨ General taster or engagement</button>
+            </div>
+            <div class="quiz-nav">
+              <button class="quiz-back-btn" onclick="prevStep(1)">← Back</button>
+              <button class="quiz-next-btn" id="qnext-1" onclick="nextStep(1)" disabled>Next →</button>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-step" id="qstep-2">
+            <div class="quiz-q">How many students in the session?<span>This helps narrow down apps that suit your group size.</span></div>
+            <div class="quiz-options">
+              <button class="quiz-opt" onclick="selectOpt(2,this,'1–5 (individual or small group)')">👤 1–5 (individual or small group)</button>
+              <button class="quiz-opt" onclick="selectOpt(2,this,'6–15 (small class)')">👥 6–15 (small class)</button>
+              <button class="quiz-opt" onclick="selectOpt(2,this,'16–30 (medium class)')">👥👥 16–30 (medium class)</button>
+              <button class="quiz-opt" onclick="selectOpt(2,this,'30+ (large cohort or rotation)')">🏛 30+ (large cohort or rotation)</button>
+            </div>
+            <div class="quiz-nav">
+              <button class="quiz-back-btn" onclick="prevStep(2)">← Back</button>
+              <button class="quiz-next-btn" id="qnext-2" onclick="nextStep(2)" disabled>Next →</button>
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-step" id="qstep-3">
+            <div class="quiz-q">Any budget or content preferences?<span>Optional — helps us refine recommendations.</span></div>
+            <div class="quiz-options">
+              <button class="quiz-opt" onclick="selectOpt(3,this,'Free or very low cost preferred')">💚 Free or very low cost</button>
+              <button class="quiz-opt" onclick="selectOpt(3,this,'Budget flexible if educationally strong')">💛 Budget flexible</button>
+              <button class="quiz-opt" onclick="selectOpt(3,this,'Needs to be short — under 15 minutes')">⏱ Short sessions (under 15 min)</button>
+              <button class="quiz-opt" onclick="selectOpt(3,this,'No strong preference')">🤷 No strong preference</button>
+            </div>
+            <div class="quiz-nav">
+              <button class="quiz-back-btn" onclick="prevStep(3)">← Back</button>
+              <button class="quiz-next-btn" id="qnext-3" onclick="runFinder()" disabled>Find Apps →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="ai-results" id="ai-results">
+          <div class="ai-results-title">Here are your recommendations</div>
+          <div class="ai-results-sub" id="ai-results-sub"></div>
+          <div id="results-container"></div>
+          <button class="ai-restart" onclick="restartFinder()">↩ Start over</button>
+        </div>
+      </div>
+
+      <!-- SPARK CONTACT FORM (fallback) -->
+      <div class="spark-contact" id="spark-contact">
+        <div class="spark-contact-header">
+          <span style="font-size:1.4rem">💬</span>
+          <h3>Get help from the Spark team</h3>
+        </div>
+        <p>Not finding what you need? Tell us about your teaching context and the Spark team will personally recommend an app for you.</p>
+        <div class="form-grid" style="max-width:600px">
+          <div class="form-group">
+            <label class="form-label">Your Name <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="sc-name" placeholder="e.g. Dr. Aoife Murphy">
+          </div>
+          <div class="form-group">
+            <label class="form-label">DCU Email <span class="form-required">*</span></label>
+            <input class="form-input" type="email" id="sc-email" placeholder="yourname@dcu.ie">
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">What are you trying to achieve? <span class="form-required">*</span></label>
+            <textarea class="form-input form-textarea" id="sc-context" placeholder="Tell us about your module, the learning outcome you want to support, and your student group..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-gold" onclick="submitSparkContact()">Send to Spark Team →</button>
+          <button class="quiz-back-btn" onclick="hideSparkContact()">← Back</button>
+        </div>
+        <div class="form-success" id="sc-success">
+          <div class="success-icon">✅</div>
+          <h3>Message sent!</h3>
+          <p>The Spark team will be in touch within 2 working days with a personalised recommendation.</p>
+        </div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div id="req-form-section" style="display:none">
+      <div class="section-intro" style="margin-top:1rem">
+        <div class="section-kicker">Know what you want?</div>
+        <h2>Request a Specific App</h2>
+        <p>Please review the requirements below before submitting. The Spark team aims to respond within 5 working days.</p>
+      </div>
+      <!-- Requirements cards -->
+      <div class="req-grid">
+        <div class="req-card">
+          <div class="req-icon">🥽</div>
+          <div class="req-title">Meta Quest Compatible</div>
+          <div class="req-body">The app must be available on Meta Quest 2, 3 or Pro — or have a confirmed roadmap for Meta Quest support. PC-only or tethered-only apps are not currently supported.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-icon">🎓</div>
+          <div class="req-title">Academic Relevance</div>
+          <div class="req-body">The app should align with at least one DCU module, programme or transversal skill area. Please indicate the subject area and the specific learning outcomes it supports.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-icon">👥</div>
+          <div class="req-title">Group or Individual Use</div>
+          <div class="req-body">The app should be suitable for either a supervised group session (10–30 students) or structured individual use. Apps requiring persistent accounts or external data are subject to additional review.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-icon">⚖️</div>
+          <div class="req-title">Appropriate Content</div>
+          <div class="req-body">Content must be appropriate for a university audience. Apps containing graphic violence, gambling mechanics, or content unrelated to education will not be approved.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-icon">💶</div>
+          <div class="req-title">Cost Transparency</div>
+          <div class="req-body">Please provide the pricing model — free, one-off purchase, or subscription. Institutional pricing is preferred. High-cost enterprise apps may be flagged for pilot review before full approval.</div>
+        </div>
+        <div class="req-card">
+          <div class="req-icon">🔒</div>
+          <div class="req-title">Data & Privacy</div>
+          <div class="req-body">The app must not require students to create personal accounts unless a shared institutional login is available. Data collection should be minimal and GDPR-compliant.</div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="request-form-wrap">
+        <div class="request-form-header">
+          <div class="section-kicker">Submit Your Request</div>
+          <h3>App Request Form</h3>
+          <p>Fill in the details below. The Spark team aims to respond within 5 working days.</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Your Name <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="req-name" placeholder="e.g. Dr. Aoife Murphy">
+          </div>
+          <div class="form-group">
+            <label class="form-label">DCU Email Address <span class="form-required">*</span></label>
+            <input class="form-input" type="email" id="req-email" placeholder="yourname@dcu.ie">
+          </div>
+          <div class="form-group">
+            <label class="form-label">App Name <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="req-appname" placeholder="e.g. Labster VR">
+          </div>
+          <div class="form-group">
+            <label class="form-label">App Website / Store Link <span class="form-required">*</span></label>
+            <input class="form-input" type="url" id="req-url" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">DCU School / Faculty</label>
+            <select class="form-input form-select" id="req-school">
+              <option value="">— Select School —</option>
+              <option>School of Nursing, Psychotherapy & Community Health</option>
+              <option>School of Health & Human Performance</option>
+              <option>School of Engineering</option>
+              <option>School of Computing</option>
+              <option>School of Science & Clinical Language Sciences</option>
+              <option>DCU Business School</option>
+              <option>School of Communications</option>
+              <option>School of Education</option>
+              <option>School of Law & Government</option>
+              <option>Other / Cross-Faculty</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pricing Model <span class="form-required">*</span></label>
+            <select class="form-input form-select" id="req-price">
+              <option value="">— Select —</option>
+              <option>Free</option>
+              <option>One-off purchase (under €100)</option>
+              <option>One-off purchase (€100–€500)</option>
+              <option>Subscription / institutional licence</option>
+              <option>Enterprise (contact vendor)</option>
+              <option>Unknown / needs checking</option>
+            </select>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">Transversal Skills / Learning Outcomes Supported <span class="form-required">*</span></label>
+            <input class="form-input" type="text" id="req-skills" placeholder="e.g. Critical Thinking, Digital Literacy — or module code/name">
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">Why should this app be added? <span class="form-required">*</span></label>
+            <textarea class="form-input form-textarea" id="req-reason" placeholder="Describe the educational use case, how you plan to use it and the student group it would benefit..."></textarea>
+          </div>
+          <div class="form-group form-group-full">
+            <label class="form-label">Additional Notes</label>
+            <textarea class="form-input form-textarea" id="req-notes" placeholder="Vendor contacts, demo availability, anything else useful for the team..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-gold" onclick="submitRequest()">Submit Request →</button>
+          <p class="form-note">Fields marked <span class="form-required">*</span> are required. Submissions are reviewed by the Spark team — you will receive a confirmation email to your DCU address.</p>
+        </div>
+
+        <div class="form-success" id="formSuccess">
+          <div class="success-icon">✅</div>
+          <h3>Request Submitted!</h3>
+          <p>Thank you — the Spark team will review your request and respond to your DCU email within 5 working days.</p>
+        </div>
+      </div><!-- end request-form-wrap -->
+      </div><!-- end req-form-section -->
+    </div><!-- end catalogue-body -->
+  </div><!-- end tab-request -->
+
+  <!-- TAB 6: PROFESSIONAL -->
+  <div class="tab-panel" id="tab-professional">
+    <div class="catalogue-body">
+      <div class="section-intro">
+        <div class="section-kicker">Specialised — Professional, Industry & Career Development</div>
+        <h2>Professional, Industry & Career Development</h2>
+        <p>Apps for workplace readiness, industry training, health & safety and career exploration — bridging academic learning with professional environments.</p>
+      </div>
+      <div class="apps-grid">
+        <div class="app-card" onclick="showAppDetail('proteus')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=600&q=80" alt="Proteus">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🧪</div><div class="app-name">Proteus</div></div>
+            <div class="app-desc">Biotech and cell therapy training — explore virtual labs and cellular manufacturing processes. Designed for outreach, recruitment and education in medicines manufacturing.</div>
+            <div class="app-footer"><span class="app-price">€2k–€8k/yr</span><span class="app-session">10–20 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('realityacademy')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80" alt="Reality Academy">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🏢</div><div class="app-name">Reality Academy</div></div>
+            <div class="app-desc">Workplace training platform covering professional safety scenarios and career-based learning — provides realistic simulated job environments for skills development and sector orientation.</div>
+            <div class="app-footer"><span class="app-price">€3k–€15k/yr</span><span class="app-session">15–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('healthsafety')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&q=80" alt="Health and Safety Bundle">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🦺</div><div class="app-name">Health & Safety VR Bundle</div></div>
+            <div class="app-desc">25 ready-made VR modules covering fire safety, first aid, arc flash, scaffolding, forklift safety and more — aligned to OSHA, NEBOSH and ISO standards with Study, Training and Exam modes.</div>
+            <div class="app-footer"><span class="app-price">€3k–€15k/yr</span><span class="app-session">15–40 min</span></div>
+          </div>
+        </div>
+        <div class="app-card" onclick="showAppDetail('virtualworkexp')">
+          <img class="app-img" src="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=600&q=80" alt="Virtual Work Experience">
+          <div class="app-body"><div class="app-header"><div class="app-logo-fallback">🏭</div><div class="app-name">Virtual Work Experience</div></div>
+            <div class="app-desc">Students explore technical and conceptual skills in short VR-based workplace tasters — try machines from metalworking and glass industries including hydraulic presses and industrial equipment.</div>
+            <div class="app-footer"><span class="app-price">Institutional</span><span class="app-session">15–30 min</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <div class="cta-text">
+      <h3>Ready to Book a VR Session?</h3>
+      <p>Contact The Spark team to confirm your room and discuss setup for AG41, AG42 or AG49.</p>
+    </div>
+    <a href="mailto:thespark@dcu.ie" class="btn-gold">Book Now — thespark@dcu.ie</a>
+  </div>
+
+</div><!-- end home-page -->
+
+<!-- ====== DETAIL PAGE ====== -->
+<div class="page" id="detail-page">
+  <div class="detail-header">
+    <div id="detailLogoWrap"></div>
+    <div>
+      <div class="detail-cat" id="detailCat"></div>
+      <div class="detail-title" id="detailTitle"></div>
+      <div class="detail-desc" id="detailDesc"></div>
+    </div>
+  </div>
+  <div class="detail-meta-bar">
+    <div class="meta-item"><div class="meta-label">Session Length</div><div class="meta-value" id="detailSession"></div></div>
+    <div class="meta-item"><div class="meta-label">Pricing</div><div class="meta-value" id="detailPrice"></div></div>
+    <div class="meta-item"><div class="meta-label">Platform</div><div class="meta-value" id="detailPlatform"></div></div>
+  </div>
+  <div class="detail-skills-bar" id="detailSkillsBar" style="display:none">
+    <div class="dsb-label">Transversal Skills:</div>
+    <div id="detailSkillTags"></div>
+  </div>
+  <div class="detail-content">
+    <h3>About This App</h3>
+    <img id="detailImg" class="detail-img-full" src="" alt="" onerror="this.style.display='none'">
+    <p id="detailLong" style="color:var(--muted);font-size:0.9rem;line-height:1.72;"></p>
+  </div>
+  <div class="cta-banner">
+    <div class="cta-text"><h3>Interested in this app?</h3><p>Get in touch to discuss booking and setup requirements.</p></div>
+    <a href="mailto:thespark@dcu.ie" class="btn-gold">Book Now</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">The <span>Spark</span> · DCU</div>
+  <p>Dublin City University · thespark@dcu.ie · AG41 · AG42 · AG49</p>
+</footer>
+
+<script>
+const appData = {
+  bodyswaps:{icon:'🗣',cat:'Transversal — Communication & Leadership',title:'Bodyswaps',desc:'AI-powered soft skills training with 30+ modules covering communication, employability and leadership.',long:'Bodyswaps places users in realistic scenarios where they practise and refine interpersonal skills. After each simulation the unique Bodyswap feature lets learners step into the other role and watch themselves back — a powerful reflective learning tool. The AI engine analyses speech speed, body language and decision-making in real time.',session:'10–20 min',price:'~€50–€100/user/yr',platform:'Meta Quest (confirmed)',skills:['Communication','Leadership','Teamwork','Employability'],img:'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80'},
+  vrspeech:{icon:'🎤',cat:'Transversal — Communication',title:'VR Speech Trainer',desc:'Public speaking simulator with virtual audiences and AI-powered performance feedback.',long:'Students deliver presentations in simulated environments including conference rooms, classrooms and TED Talk stages. The app tracks eye contact, pacing, filler words and body language — providing instant actionable feedback. Great for any module requiring presentations or public communication.',session:'10–15 min',price:'€20–€40 one-off',platform:'Meta Quest',skills:['Communication','Confidence','Presentation'],img:'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80'},
+  meetinvr:{icon:'🤝',cat:'Transversal — Collaboration',title:'MeetInVR',desc:'Best-in-class virtual collaboration and meeting platform for workshops, training and education.',long:'MeetInVR provides a richly featured virtual meeting space with whiteboards, presentation tools and interactive 3D objects. Ideal for cross-campus or international group projects, virtual office simulations and collaborative workshops.',session:'20–60 min',price:'€10–€30/user/mo',platform:'Meta Quest (confirmed)',skills:['Collaboration','Communication','Digital Literacy'],img:'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=900&q=80'},
+  engage:{icon:'🎓',cat:'Transversal — Broad Platform',title:'Engage XR',desc:'Large-scale VR teaching and events platform — lectures, virtual field trips and structured sessions.',long:'Engage XR is a comprehensive metaverse platform for education and training. Instructors can host live classes with up to hundreds of attendees in shared virtual spaces, lead field trips and build interactive training content. Used by universities worldwide for campus replicas and remote learning.',session:'30–60 min',price:'€5k–€20k/yr',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Collaboration','Communication','Ways of Working'],img:'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=900&q=80'},
+  immerse:{icon:'💼',cat:'Transversal — Ways of Working',title:'Immerse',desc:'Enterprise VR training platform with structured professional modules and analytics.',long:'Immerse provides a wide library of workplace training scenarios covering professional behaviours, communication, and industry-specific skills. Institutions can also build custom modules. Detailed analytics track learner progress and identify skill gaps across large cohorts.',session:'20–40 min',price:'Enterprise subscription',platform:'Meta Quest',skills:['Ways of Working','Digital Literacy','Communication'],img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80'},
+  revertovr:{icon:'🔄',cat:'Transversal — Empathy & Ethics',title:'Reverto VR',desc:'Empathy and perspective training through immersive role-play scenarios.',long:'Reverto VR immerses learners in situations from perspectives different to their own, building empathy and emotional intelligence. Particularly effective for diversity and inclusion training, social sciences and ethical decision-making modules.',session:'10–20 min',price:'~€1k–€5k/yr (institutional)',platform:'Institutional',skills:['Ethics','Empathy','Personal Agility'],img:'https://images.unsplash.com/photo-1509099652299-30938b0aeb63?w=900&q=80'},
+  arkio:{icon:'🏗',cat:'Transversal — Creativity & Design',title:'Arkio',desc:'Collaborative 3D architectural and spatial design platform — work with up to 24 people.',long:'Arkio lets teams sketch, model and review buildings and interiors at 1:1 scale in VR. It integrates with Revit, Rhino, SketchUp and Archicad. Free educational licences are available for institutions. Passthrough MR mode on Quest 3 lets you overlay virtual designs onto real spaces.',session:'20–60 min',price:'~€45/user/mo (edu licences free)',platform:'Meta Quest (confirmed)',skills:['Creative Thinking','Digital Literacy','Teamwork','Entrepreneurship'],img:'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=900&q=80'},
+  noda:{icon:'🧩',cat:'Transversal — Creativity & Thinking',title:'Noda',desc:'Collaborative 3D mind-mapping — organise ideas spatially in VR.',long:'Noda is a VR brainstorming and knowledge-mapping tool where users place nodes, connect ideas and build complex diagrams in three-dimensional space. Ideal for group ideation sessions, project planning and visual thinking workshops.',session:'15–30 min',price:'~€10–€20 one-off',platform:'App Lab / SideQuest',skills:['Creative Thinking','Critical Thinking','Project Management'],img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80'},
+  campfire:{icon:'🔥',cat:'Transversal — Design Collaboration',title:'Campfire',desc:'Collaborative 3D design and discussion platform for teams — free on Meta Store.',long:'Campfire is designed for communicating around 3D objects rather than 2D screens. Teams share interactive CAD models, annotate designs and present concepts in shared virtual space. Works across VR, desktop, Mac and iPad. Particularly valuable for engineering, architecture and product design.',session:'20–40 min',price:'Free tier / enterprise subscription',platform:'Meta Quest (confirmed)',skills:['Creative Thinking','Teamwork','Digital Literacy','Entrepreneurship'],img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80'},
+  cogdemo:{icon:'🧠',cat:'Transversal — Cognitive & Critical Thinking',title:'Cognitive Training Demo',desc:'Gamified VR demo involving mechanical systems and physics interaction.',long:'A physics-based problem-solving experience where learners assemble components, activate systems and troubleshoot mechanical processes. Develops analytical thinking, spatial reasoning and logical problem-solving through engaging hands-on interaction.',session:'10–15 min',price:'Free / demo-based',platform:'Meta Quest',skills:['Critical Thinking','Problem Solving','Digital Literacy'],img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=900&q=80'},
+  thinglink:{icon:'🔗',cat:'Transversal — Digital Literacy',title:'ThingLink',desc:'Tool for creating and exploring interactive VR and 360° learning experiences.',long:'ThingLink allows educators and students to build immersive interactive content by embedding media, text and questions into 360° images and VR scenes. Students can both create and experience content — making it a powerful tool for digital literacy and active learning.',session:'20–40 min',price:'€5–€10/user/mo',platform:'Web + VR',skills:['Digital Literacy','Creative Thinking','Communication'],img:'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=900&q=80'},
+  xrguru:{icon:'📡',cat:'Transversal — Digital Literacy',title:'XR Guru',desc:'Next-generation extended reality application that turbocharges the learning experience.',long:'XR Guru covers a broad range of subjects through immersive 3D visualisations — from science and geography to history and engineering concepts. Suitable for any faculty as an introductory or supplementary VR experience, requiring no prior subject knowledge.',session:'10–20 min',price:'~€500–€3k/yr',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Critical Thinking','Futures Literacy'],img:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80'},
+  victoryxr:{icon:'🏆',cat:'Transversal — Digital Literacy',title:'VictoryXR (VXRLabs)',desc:'150+ global field trips, virtual labs, gamified history and CSI — multiplayer synchronous learning.',long:'VXRLabs is a comprehensive 3D spatial learning platform covering chemistry, biology, history, literature and CSI crime scene investigation. Multiple students can enter the same virtual space simultaneously. Includes an AI tutor and creator tools for building custom learning environments.',session:'15–30 min',price:'€1k–€5k/yr',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Critical Thinking','Teamwork'],img:'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80'},
+  vrinschool:{icon:'🏫',cat:'Transversal — Digital Literacy',title:'VRinSchool',desc:'Curriculum-based VR learning platform — learn by doing across practical subjects.',long:'VRinSchool offers modules including how to install electricity, extinguish fires and lay bricks — all in VR. Designed to make practical vocational and technical subjects accessible through immersive simulation. Works well as a taster experience for any new VR user.',session:'15–30 min',price:'Subscription (institutional)',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Ways of Working'],img:'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=900&q=80'},
+  wetrainyourbrain:{icon:'🧠',cat:'Transversal — Personal Agility',title:'We Train Your Brain',desc:'Advanced cognitive training designed to strengthen mental skills for school, work and sport.',long:'We Train Your Brain offers targeted exercises for focus, attention, memory and processing speed. Built on neuroscience principles, each session adapts to the user\'s performance level. Suitable for students looking to improve academic performance or cognitive resilience.',session:'10–15 min',price:'€500–€3k/yr (institutional)',platform:'Meta Quest (confirmed)',skills:['Personal Agility','Critical Thinking','Focus'],img:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80'},
+  mastermind:{icon:'🎯',cat:'Transversal — Personal Agility',title:'Mastermind Cognitive Training',desc:'Neuroscience-based programme improving attention, working memory and processing speed.',long:'Developed by a multidisciplinary team of neuroscientists and clinicians, Mastermind combines 3 eye exercises and 2 cognitive training games per 20-minute session. An initial assessment sets a baseline and reassessment every 24 sessions measures progress. Proven results across education, sports and business.',session:'~20 min',price:'Subscription / institutional',platform:'Meta Quest (confirmed)',skills:['Personal Agility','Critical Thinking','Focus'],img:'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=900&q=80'},
+  humananatomy:{icon:'🫀',cat:'Health & Medical',title:'Human Anatomy VR',desc:'Comprehensive 3D anatomical atlas with 13,000+ structures — trusted in 180+ countries.',long:'Human Anatomy VR provides a full anatomical atlas combined with an advanced 3D DICOM viewer for CT and MRI scans. Features include 1,500+ stereoscopic cadaver images, 500+ body movements, microanatomy models and multi-user collaboration. Studies show 45% improvement in student results.',session:'10–20 min',price:'~€30–€50/headset',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Digital Literacy'],img:'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?w=900&q=80'},
+  holohuman:{icon:'🧬',cat:'Health & Medical',title:'HoloHuman',desc:'Interactive layered anatomy visualisation — peel back body layers to explore organs and structures.',long:'HoloHuman lets students explore the human body layer by layer — from skin to skeleton — with high-detail 3D models. Students can isolate individual systems, rotate and zoom into specific structures, making it ideal for anatomy introductions for nursing, medicine and sports science.',session:'10–15 min',price:'Low-cost / bundled',platform:'Limited availability',skills:['Critical Thinking'],img:'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=900&q=80'},
+  undertheskin:{icon:'💉',cat:'Health & Medical',title:'Under The Skin',desc:'VR experience designed to improve safety and understanding of chemotherapy treatment.',long:'Under The Skin takes learners inside the body to experience biological and clinical processes related to chemotherapy. Designed to build empathy for patients and understanding of oncology treatment. Short, emotionally impactful and accessible to non-specialist audiences.',session:'10–20 min',price:'Low-cost / academic',platform:'Meta Quest (confirmed)',skills:['Ethical Decision Making','Empathy'],img:'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=900&q=80'},
+  cellularsafari:{icon:'🦠',cat:'Health & Medical',title:'Cellular Safari',desc:'Microscopic exploration of cells — navigate cellular structures at a scale impossible in a real lab.',long:'Cellular Safari shrinks learners down to the size of a cell and immerses them in the microscopic world of biological structures. Students explore cell organelles, membranes and biological processes in a visually stunning and memorable way.',session:'10–15 min',price:'Free–€20',platform:'Meta Quest',skills:['Critical Thinking'],img:'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=900&q=80'},
+  biodissection:{icon:'🐸',cat:'Health & Medical',title:'Biology Dissection Lab',desc:'Virtual dissection of worm, clam, crayfish, fish and frog — unlimited repeats, no mess.',long:'Biology Dissection Lab redefines biology education for secondary and university programmes. Students perform virtual dissections following realistic procedures, identifying organs and systems in each specimen. Because it\'s virtual, students can repeat dissections as many times as needed without resource cost.',session:'20–40 min',price:'€20–€50',platform:'Meta Quest (confirmed)',skills:['Critical Thinking'],img:'https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?w=900&q=80'},
+  nanome:{icon:'⚗️',cat:'Health & Medical',title:'Nanome',desc:'Molecular visualisation platform — manipulate molecules in 3D, used by top R&D labs.',long:'Nanome allows students and researchers to interact with molecular structures in a fully immersive 3D environment. Users can rotate molecules, run docking simulations and collaborate in shared virtual lab spaces. Used by pharmaceutical companies and universities worldwide.',session:'15–30 min',price:'Free + enterprise tiers',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Digital Literacy'],img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=900&q=80'},
+  oxfordmed:{icon:'🏥',cat:'Health & Medical',title:'Oxford Medical Simulation',desc:'AI-driven clinical training with rich complex patient scenarios and learning analytics.',long:'OMS combines clinical VR simulations with AI feedback and educator analytics. Learners work through patient scenarios covering diagnosis, treatment planning and clinical communication. Research has shown significantly improved clinical confidence and decision-making speed among medical students.',session:'15–30 min',price:'€3k–€10k/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Ethical Decision Making','Communication'],img:'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=900&q=80'},
+  vrpatients:{icon:'👩‍⚕️',cat:'Health & Medical',title:'VRPatients',desc:'Free AI-driven patient simulation — 35+ ready-to-run scenarios, no coding required.',long:'VRPatients is a no-code platform allowing nursing and healthcare educators to create and deploy patient simulations. Powered by PhysioLogicAI, it supports multilingual AI conversations and mixed reality. 35+ premade scenarios cover a wide range of clinical encounters.',session:'15–25 min',price:'Free on Meta Store',platform:'Meta Quest (confirmed)',skills:['Communication','Ethical Decision Making','Critical Thinking'],img:'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=900&q=80'},
+  periopsim:{icon:'🔬',cat:'Health & Medical',title:'PeriopSim',desc:'Operating room simulation — practise surgical procedures, instrument handling and anticipation.',long:'PeriopSim prepares perioperative nurses and surgical technologists for real OR situations. Learners practise the steps of surgical procedures, instrument names, sequencing and anticipating surgeon needs in a realistic virtual operating room. Significantly reduces the time needed to become OR-ready.',session:'20–40 min',price:'€5k+/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Ways of Working'],img:'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=900&q=80'},
+  medreality:{icon:'🩻',cat:'Health & Medical',title:'MedReality',desc:'Clinical simulation training — scenario-based VR for medical and nursing students.',long:'MedReality provides realistic clinical scenarios that challenge students to apply theoretical knowledge to patient encounters. Covers a range of clinical settings and case types, with built-in assessment tools for instructors.',session:'15–30 min',price:'Institutional',platform:'Institutional',skills:['Critical Thinking','Communication'],img:'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&q=80'},
+  ctdhelse:{icon:'🚑',cat:'Health & Medical',title:'CTD Helse',desc:'Norwegian emergency and medical protocol training — ABCDE, CPR and clinical workflows.',long:'Connect The Dots (CTD) developed this platform for medical personnel to perform procedural training including clinical observation and risk assessment. Supports collaborative learning with instructor-present modes — students can train simultaneously from different locations.',session:'15–30 min',price:'€3k–€10k/yr',platform:'Enterprise (not public store)',skills:['Critical Thinking','Communication','Teamwork'],img:'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=900&q=80'},
+  maskillslab:{icon:'💊',cat:'Health & Medical',title:'MA Skills Lab',desc:'Clinical skills practice in VR — guided procedures for medical and nursing students.',long:'MA Skills Lab provides step-by-step guided clinical skill practice modules covering assessment techniques, medication procedures and patient care competencies. Designed to bridge the gap between classroom theory and clinical placement readiness.',session:'15–30 min',price:'€2k–€8k/yr',platform:'Institutional',skills:['Critical Thinking','Ways of Working'],img:'https://images.unsplash.com/photo-1581595219315-a187dd40c322?w=900&q=80'},
+  vrcpr:{icon:'❤️',cat:'Health & Medical',title:'VR CPR',desc:'CPR training — practise chest compressions, AED use and emergency response.',long:'VR CPR allows learners to practise basic life support techniques in a realistic virtual environment. Students can repeat sessions until they achieve correct compression depth, rate and sequence. Ideal for first-year nursing, medicine and any general health and safety induction.',session:'10–15 min',price:'€10–€50',platform:'Meta Quest (available)',skills:['Ways of Working','Critical Thinking'],img:'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=900&q=80'},
+  therafy:{icon:'🧘',cat:'Health & Medical',title:'Therafy',desc:'Therapeutic VR — mental health and wellbeing scenarios for students and clinical populations.',long:'Therafy delivers immersive therapeutic experiences covering stress reduction, mindfulness and anxiety management. Can be used for student wellbeing programmes or as a clinical tool in psychology and nursing curricula.',session:'10–20 min',price:'Institutional',platform:'Institutional',skills:['Personal Agility','Ethical Decision Making'],img:'https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=900&q=80'},
+  courseta:{icon:'🎓',cat:'Health & Medical',title:'Courseta VR',desc:'VR nursing simulations — designed by nurses, with AI patients and automatic grading.',long:'Courseta VR was built by nursing instructors specifically for nursing education. Students interact with AI-powered patients, complete health assessments and perform nursing interventions — all automatically graded against clinical standards. Modules are filtered through 30+ experienced nurses for educational accuracy.',session:'15–30 min',price:'Institutional',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Communication','Ways of Working'],img:'https://images.unsplash.com/photo-1612277795421-9bc7706a4a34?w=900&q=80'},
+  pearl:{icon:'⚡',cat:'Engineering & Technical',title:'PEARL',desc:'Paderborn Electrical Engineering AR Laboratory — circuits, equipment and electrical concepts.',long:'PEARL (Paderborn Electrical Engineering AR Laboratory) allows students to discover electrical engineering through hands-on interaction with virtual circuits, lab equipment and electrical systems. Developed at Paderborn University, it bridges the gap between lecture-room theory and practical lab work.',session:'20–40 min',price:'€1k–€5k/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Digital Literacy'],img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80'},
+  virtualelectrical:{icon:'🔌',cat:'Engineering & Technical',title:'Virtual Electrical Training',desc:'Electrical safety and systems training — switchgear, arc flash and LOTO procedures.',long:'Virtual Electrical Training covers electrical safety including lockout/tagout, arc flash hazard recognition and switchgear operation. Training scenarios are aligned with international safety standards and are suitable for engineering and facilities management students.',session:'15–30 min',price:'€2k–€5k/yr',platform:'Meta Quest',skills:['Ways of Working','Critical Thinking'],img:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=900&q=80'},
+  onelabvr:{icon:'🔬',cat:'Engineering & Technical',title:'OneLab VR',desc:'50,000 sq ft virtual clinical lab — 12 labs, hundreds of pieces of equipment, 10–15 min modules.',long:'OneLab VR is a CDC-developed virtual laboratory facility covering clinical and public health laboratory training. The 10–15 minute scenario modules include specimen packing, centrifuge operation and laboratory orientation. Multiplayer tools allow collaborative training sessions.',session:'10–15 min',price:'€1k–€5k/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Digital Literacy'],img:'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=900&q=80'},
+  optics:{icon:'🔭',cat:'Engineering & Technical',title:'Optics / Optics Trainer',desc:'Light and optical systems simulation — visualise light behaviour through lenses and prisms.',long:'This app simulates the behaviour of light through a range of optical instruments and systems. Students can set up experiments, observe phenomena and understand core optics principles in a way that would be costly or slow in a physical lab. Suited to physics and optometry students.',session:'10–20 min',price:'Low-cost',platform:'Meta Quest (confirmed)',skills:['Critical Thinking'],img:'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=900&q=80'},
+  eddaphysics:{icon:'⚛️',cat:'Engineering & Technical',title:'Edda Physics Demo',desc:'Physics visualisation — interact with motion, energy and forces in immersive simulation.',long:'Edda Physics brings abstract physics concepts to life — students interact with simulated environments to observe forces, motion and energy in ways impossible in a standard classroom. A demo version is freely available, making it a low-risk introduction to physics VR.',session:'10–20 min',price:'Free–€50',platform:'Meta Quest',skills:['Critical Thinking'],img:'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=900&q=80'},
+  firstskills:{icon:'🏭',cat:'Engineering & Technical',title:'First Skills Simulator',desc:'Manufacturing and workshop skills — operate virtual machinery safely before entering real environments.',long:'First Skills Simulator trains students in the safe operation of manufacturing machinery and workshop equipment. Students learn procedures, safety checks and operational sequences for industrial machines — building confidence and reducing risk before they enter real workshop environments.',session:'15–30 min',price:'€1k–€5k/yr',platform:'Institutional',skills:['Ways of Working','Critical Thinking'],img:'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=900&q=80'},
+  resolve:{icon:'🏗',cat:'Engineering & Technical',title:'Resolve',desc:'BIM and construction model review — explore large 3D models collaboratively on Meta Quest.',long:'Resolve allows engineering and construction teams to review, annotate and walk through large Building Information Models (BIM) in VR. Teams can simulate maintenance procedures and safety walkthroughs at full scale — transforming how construction projects are reviewed and communicated.',session:'20–60 min',price:'€5k–€20k/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Teamwork','Project Management'],img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=80'},
+  frontline:{icon:'⚙️',cat:'Engineering & Technical',title:'Frontline.io',desc:'CAD-to-digital-twin platform for industrial training — maintenance, workflows and AR support.',long:'Frontline.io transforms CAD files into interactive digital twins for VR and AR training. Technicians practise maintenance procedures, assembly sequences and safety checks in a virtual replica of real equipment. Cross-platform so teams can train across VR, mobile and desktop simultaneously.',session:'20–40 min',price:'Enterprise',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Ways of Working','Critical Thinking'],img:'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=900&q=80'},
+  virtualtechlab:{icon:'💻',cat:'Engineering & Technical',title:'Virtual TechLab',desc:'Virtual IT hardware education — build, configure and troubleshoot computer hardware in VR.',long:'Virtual TechLab is a comprehensive virtual learning environment for IT hardware education. Students build and configure virtual computer components, identify hardware faults and practise troubleshooting procedures — developing practical IT skills without the cost of physical lab equipment.',session:'15–30 min',price:'Institutional',platform:'Meta Quest (confirmed)',skills:['Digital Literacy','Critical Thinking'],img:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80'},
+  ecosphere:{icon:'🌿',cat:'Environment & Geography',title:'Ecosphere',desc:'Award-winning documentary — wildlife conservation on Earth with WWF and the United Nations.',long:'Ecosphere (by PHORIA) is a social impact documentary platform produced with WWF, Silverback Films and the UN. Seasons 1 and 2 take learners to Kenya, Borneo, Raja Ampat, Colombia and the Sea of Islands — experiencing firsthand the work of indigenous and community-led conservation efforts.',session:'10–20 min',price:'Free–€20',platform:'Meta Quest (confirmed)',skills:['Futures Literacy','Ethical Decision Making'],img:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=900&q=80'},
+  pollinatorpark:{icon:'🐝',cat:'Environment & Geography',title:'Pollinator Park',desc:'Set in 2050 — futuristic park for pollinators, emotionally engaging, 5-min modular chapters.',long:'Created for the European Commission, Pollinator Park is set in a future where pollinators are near-extinct. Visitors explore the park, meet its founder and try their hand at pollination. It comes with modular 5-minute chapters — perfect for events and headset rotation. Seated experience available.',session:'5–30 min',price:'Free',platform:'Meta Quest (confirmed)',skills:['Futures Literacy','Ethical Decision Making'],img:'https://images.unsplash.com/photo-1490750967868-88df5691cc15?w=900&q=80'},
+  triptovr:{icon:'✈️',cat:'Environment & Geography',title:'TriptoVR',desc:'Virtual travel to 50+ global destinations — Tokyo, Cape Town, Venice and beyond.',long:'TriptoVR delivers lifelike virtual travel to some of the world\'s most iconic destinations in stunning 360° realism. Students can explore cultural heritage sites, natural landmarks and city environments — supporting geography, cultural studies, tourism and language learning modules.',session:'10–30 min',price:'Free–€20',platform:'App Lab / SideQuest',skills:['Digital Literacy','Futures Literacy'],img:'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&q=80'},
+  wildxr:{icon:'🦁',cat:'Environment & Geography',title:'WildXR',desc:'150+ species in 360° VR — encounter rare wildlife with narrated encounters and education mode.',long:'WildXR films animals in their natural habitats using 360° cameras, creating genuinely immersive wildlife encounters. With over 150 species and an education mode featuring narrated information points, it is suitable for biology, environmental science and general education taster sessions.',session:'10–15 min',price:'Free–low-cost',platform:'Meta Quest (confirmed)',skills:['Futures Literacy','Critical Thinking'],img:'https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=900&q=80'},
+  proteus:{icon:'🧪',cat:'Professional & Industry',title:'Proteus',desc:'Biotech and cell therapy training — explore virtual labs and cellular manufacturing processes.',long:'Proteus introduces learners to the world of advanced cell and gene therapies through an immersive exploration of virtual lab environments and cellular manufacturing processes. Designed for engagement, recruitment and education in the pharmaceutical and life sciences industry.',session:'10–20 min',price:'€2k–€8k/yr',platform:'Meta Quest (confirmed)',skills:['Critical Thinking','Digital Literacy'],img:'https://images.unsplash.com/photo-1614935151651-0bea6508db6b?w=900&q=80'},
+  realityacademy:{icon:'🏢',cat:'Professional & Industry',title:'Reality Academy',desc:'Workplace training platform — professional safety scenarios and career-based simulations.',long:'Reality Academy provides structured workplace training modules covering professional behaviours, safety procedures and career exploration. Students experience realistic job environments from various industries — building the readiness and confidence needed for work placements and graduate employment.',session:'15–40 min',price:'€3k–€15k/yr',platform:'Institutional',skills:['Ways of Working','Entrepreneurship'],img:'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80'},
+  healthsafety:{icon:'🦺',cat:'Professional & Industry',title:'Health & Safety VR Training Bundle',desc:'25 modules — fire safety, first aid, arc flash, scaffolding and more. OSHA/NEBOSH aligned.',long:'The GWPro Health & Safety VR Training Bundle includes 25 ready-made modules covering the most common workplace hazards. Each module has Study, Training and Exam modes for progressive learning. Content covers fire safety, first aid, forklift, scaffolding, trenching, PPE, risk assessment and more — aligned to OSHA, NEBOSH and ISO standards.',session:'15–40 min',price:'€3k–€15k/yr',platform:'Meta Quest (confirmed)',skills:['Ways of Working','Critical Thinking'],img:'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=900&q=80'},
+  virtualworkexp:{icon:'🏭',cat:'Professional & Industry',title:'Virtual Work Experience',desc:'Short VR workplace tasters — try industrial machinery and explore technical career paths.',long:'Virtual Work Experience allows students — particularly those at secondary and early tertiary level — to actively explore technical career environments. They can try operating a hydraulic press, glass industry equipment and other industrial machinery safely in VR before committing to a career path.',session:'15–30 min',price:'Institutional',platform:'Meta Quest (confirmed)',skills:['Ways of Working','Entrepreneurship'],img:'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=900&q=80'}
+};
+
+function submitRequest(){
+  const name = document.getElementById('req-name').value.trim();
+  const email = document.getElementById('req-email').value.trim();
+  const appname = document.getElementById('req-appname').value.trim();
+  const url = document.getElementById('req-url').value.trim();
+  const skills = document.getElementById('req-skills').value.trim();
+  const reason = document.getElementById('req-reason').value.trim();
+  const school = document.getElementById('req-school').value.trim();
+  const price = document.getElementById('req-price').value.trim();
+  const notes = document.getElementById('req-notes').value.trim();
+
+  if(!name||!email||!appname||!url||!skills||!reason){
+    const inputs = [
+      {id:'req-name',val:name},{id:'req-email',val:email},
+      {id:'req-appname',val:appname},{id:'req-url',val:url},
+      {id:'req-skills',val:skills},{id:'req-reason',val:reason}
+    ];
+    inputs.forEach(({id,val})=>{
+      const el = document.getElementById(id);
+      if(!val){ el.style.borderColor='#c0392b'; el.addEventListener('input',()=>el.style.borderColor='',{once:true}); }
+    });
+    return;
+  }
+  const emailRe = /^[^\s@]+@dcu\.ie$/i;
+  if(!emailRe.test(email)){
+    const el = document.getElementById('req-email');
+    el.style.borderColor='#c0392b';
+    el.placeholder='Must be a @dcu.ie address';
+    el.addEventListener('input',()=>{ el.style.borderColor=''; el.placeholder='yourname@dcu.ie'; },{once:true});
+    return;
+  }
+
+  const btn = document.querySelector('#tab-request .btn-gold');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  fetch('https://formspree.io/f/mzdyjnvp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name, email, appname,
+      app_url: url, skills, reason,
+      school, pricing_model: price, notes
+    })
+  })
+  .then(res => {
+    if(res.ok){
+      document.querySelector('.form-grid').style.display='none';
+      document.querySelector('.form-actions').style.display='none';
+      document.getElementById('formSuccess').classList.add('show');
+    } else {
+      btn.textContent = 'Submit Request →';
+      btn.disabled = false;
+      alert('Something went wrong. Please try again or email the Spark team directly.');
+    }
+  })
+  .catch(()=>{
+    btn.textContent = 'Submit Request →';
+    btn.disabled = false;
+    alert('Network error. Please check your connection and try again.');
+  });
+}
+
+function showSkillDetail(id){ showAppDetail(id); }
+
+function showAppDetail(id){
+  const a = appData[id];
+  if(!a) return;
+  const logoWrap = document.getElementById('detailLogoWrap');
+  logoWrap.innerHTML = `<div class="detail-logo-fallback">${a.icon}</div>`;
+  document.getElementById('detailCat').textContent = a.cat;
+  document.getElementById('detailTitle').textContent = a.title;
+  document.getElementById('detailDesc').textContent = a.desc;
+  document.getElementById('detailSession').textContent = a.session;
+  document.getElementById('detailPrice').textContent = a.price;
+  document.getElementById('detailPlatform').textContent = a.platform;
+  document.getElementById('detailLong').textContent = a.long;
+  const detailImg = document.getElementById('detailImg');
+  if(a.img){ detailImg.src=a.img; detailImg.style.display='block'; } else { detailImg.style.display='none'; }
+  const bar = document.getElementById('detailSkillsBar');
+  if(a.skills && a.skills.length){
+    bar.style.display='flex';
+    document.getElementById('detailSkillTags').innerHTML = a.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('');
+  } else { bar.style.display='none'; }
+  document.getElementById('home-page').classList.remove('active');
+  document.getElementById('detail-page').classList.add('active');
+  document.getElementById('backBtn').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function showHome(){
+  document.getElementById('detail-page').classList.remove('active');
+  document.getElementById('home-page').classList.add('active');
+  document.getElementById('backBtn').classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+// ===== PATH CHOOSER =====
+function showPath(path){
+  const finder = document.getElementById('ai-finder');
+  const formSection = document.getElementById('req-form-section');
+  const sparkContact = document.getElementById('spark-contact');
+  if(path==='finder'){
+    finder.classList.add('show');
+    formSection.style.display='none';
+    sparkContact.classList.remove('show');
+    finder.scrollIntoView({behavior:'smooth',block:'start'});
+  } else {
+    finder.classList.remove('show');
+    formSection.style.display='block';
+    sparkContact.classList.remove('show');
+    formSection.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+// ===== QUIZ =====
+const quizAnswers = {};
+function selectOpt(step, el, val){
+  el.closest('.quiz-options').querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  quizAnswers[step] = val;
+  document.getElementById('qnext-'+step).disabled = false;
+}
+function nextStep(step){
+  document.getElementById('qstep-'+step).classList.remove('active');
+  document.getElementById('qstep-'+(step+1)).classList.add('active');
+  document.getElementById('qdot-'+step).classList.remove('current');
+  document.getElementById('qdot-'+step).classList.add('done');
+  document.getElementById('qdot-'+(step+1)).classList.add('current');
+}
+function prevStep(step){
+  document.getElementById('qstep-'+step).classList.remove('active');
+  document.getElementById('qstep-'+(step-1)).classList.add('active');
+  document.getElementById('qdot-'+step).classList.remove('current');
+  document.getElementById('qdot-'+(step-1)).classList.remove('done');
+  document.getElementById('qdot-'+(step-1)).classList.add('current');
+}
+function restartFinder(){
+  quizAnswers[0]=quizAnswers[1]=quizAnswers[2]=quizAnswers[3]=null;
+  for(let i=0;i<4;i++){
+    const step = document.getElementById('qstep-'+i);
+    if(step) step.classList.remove('active');
+    const dot = document.getElementById('qdot-'+i);
+    if(dot){ dot.classList.remove('done','current'); }
+    const btn = document.getElementById('qnext-'+i);
+    if(btn) btn.disabled=true;
+    step && step.querySelectorAll('.quiz-opt').forEach(b=>b.classList.remove('selected'));
+  }
+  document.getElementById('qstep-0').classList.add('active');
+  document.getElementById('qdot-0').classList.add('current');
+  document.getElementById('quiz-wrap').style.display='block';
+  document.getElementById('ai-results').classList.remove('show');
+  document.getElementById('spark-contact').classList.remove('show');
+}
+
+// ===== AI FINDER =====
+async function runFinder(){
+  document.getElementById('quiz-wrap').style.display='none';
+  const results = document.getElementById('ai-results');
+  results.classList.add('show');
+  const container = document.getElementById('results-container');
+  document.getElementById('ai-results-sub').textContent =
+    `Based on: ${quizAnswers[0]} · ${quizAnswers[1]} · ${quizAnswers[2]} · ${quizAnswers[3]}`;
+  container.innerHTML = '<div class="ai-thinking"><div class="ai-spinner"></div>Finding the best VR apps for your needs…</div>';
+
+  // Build catalogue summary for context
+  const catalogueSummary = Object.entries(appData).map(([id,a])=>
+    `${a.title} (id:${id}) — ${a.cat} — ${a.desc} — Skills: ${a.skills.join(', ')} — ${a.session} — ${a.price}`
+  ).join('\n');
+
+  const prompt = `You are an expert VR learning consultant for The Spark at Dublin City University (DCU). 
+A user has answered 4 questions to find a suitable VR app.
+
+Their answers:
+1. Subject area: ${quizAnswers[0]}
+2. Learning goal: ${quizAnswers[1]}
+3. Group size: ${quizAnswers[2]}
+4. Budget/preference: ${quizAnswers[3]}
+
+Here is the DCU Spark VR catalogue (50 apps):
+${catalogueSummary}
+
+Your task:
+1. Recommend 2-3 apps FROM the catalogue above that best match their needs. For each, include the exact id field.
+2. If the catalogue doesn't fully cover their needs, suggest 1-2 additional VR apps that AREN'T in the catalogue but would be a great fit. Mark these as external.
+3. If no good matches exist at all, say so honestly.
+
+Respond ONLY with a JSON array, no markdown, no explanation outside JSON. Format:
+[
+  {"type":"catalogue","id":"bodyswaps","name":"Bodyswaps","why":"One sentence explanation why this fits their needs."},
+  {"type":"external","name":"Labster VR","why":"One sentence explanation. Not currently in the DCU catalogue — could be requested."}
+]`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data = await resp.json();
+    const raw = data.content.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    const recs = JSON.parse(raw);
+    renderResults(recs);
+  } catch(e){
+    container.innerHTML = '<div class="ai-thinking">⚠️ Unable to get AI recommendations right now. Please try again or contact the Spark team below.</div>';
+    showSparkFallback();
+  }
+}
+
+function renderResults(recs){
+  const container = document.getElementById('results-container');
+  if(!recs || recs.length===0){
+    container.innerHTML='<div class="ai-fallback"><p>We couldn\'t find a strong match in the catalogue for your needs.</p></div>';
+    showSparkFallback();
+    return;
+  }
+  let html = '<div class="result-cards">';
+  const hasExternal = recs.some(r=>r.type==='external');
+  recs.forEach(r=>{
+    const isCat = r.type==='catalogue';
+    const app = isCat && appData[r.id];
+    html += `<div class="result-card ${isCat?'in-catalogue':'external'}">
+      <span class="result-badge ${isCat?'badge-catalogue':'badge-external'}">${isCat?'✓ In Catalogue':'+ Not in Catalogue'}</span>
+      <div class="result-name">${isCat&&app ? app.icon+' '+app.title : r.name}</div>
+      <div class="result-why">${r.why}</div>
+      <div class="result-actions">
+        ${isCat&&app ? `<button class="btn-view-app" onclick="showAppDetail('${r.id}');document.getElementById('backBtn').classList.add('show')">View App →</button>` : ''}
+        ${!isCat ? `<button class="btn-request-this" onclick="prefillRequest('${r.name}')">Request this app →</button>` : ''}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  if(hasExternal){
+    html += '<div class="ai-fallback" style="margin-top:1rem"><p>Some suggestions above aren\'t in the catalogue yet. You can request them using the button above, or speak to the Spark team.</p><button class="contact-spark-btn" onclick="showSparkFallback()">Talk to the Spark team</button></div>';
+  }
+  container.innerHTML = html;
+}
+
+function showSparkFallback(){
+  document.getElementById('spark-contact').classList.add('show');
+  document.getElementById('spark-contact').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function hideSparkContact(){
+  document.getElementById('spark-contact').classList.remove('show');
+}
+
+function prefillRequest(appName){
+  showPath('form');
+  setTimeout(()=>{
+    const el = document.getElementById('req-appname');
+    if(el){ el.value=appName; el.style.borderColor='var(--gold)'; }
+    document.getElementById('req-form-section').scrollIntoView({behavior:'smooth'});
+  },300);
+}
+
+function submitSparkContact(){
+  const name = document.getElementById('sc-name').value.trim();
+  const email = document.getElementById('sc-email').value.trim();
+  const context = document.getElementById('sc-context').value.trim();
+  if(!name||!email||!context) return;
+  const emailRe=/^[^\s@]+@dcu\.ie$/i;
+  if(!emailRe.test(email)){ document.getElementById('sc-email').style.borderColor='#c0392b'; return; }
+  fetch('https://formspree.io/f/mzdyjnvp',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,email,message:context,type:'Spark Team Recommendation Request'})
+  }).then(()=>{
+    document.getElementById('sc-success').classList.add('show');
+  });
+}
+
+function switchTab(tab, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+</script>
+</body>
+</html>
